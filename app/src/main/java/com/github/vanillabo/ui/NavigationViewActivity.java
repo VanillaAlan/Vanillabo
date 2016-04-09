@@ -13,13 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by alan on 16/4/7.
  */
-public abstract class NavigationViewActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class NavigationViewActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -32,6 +36,10 @@ public abstract class NavigationViewActivity extends BaseActivity implements Nav
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
 
+    private View mNavigationViewHeader;
+
+    ImageView mIvAvatar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +48,15 @@ public abstract class NavigationViewActivity extends BaseActivity implements Nav
         mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
         mNavigationView.setNavigationItemSelectedListener(this);
         getActionBarToolbar();
+        mNavigationViewHeader = mNavigationView.getHeaderView(0);
+        mIvAvatar = ButterKnife.findById(mNavigationViewHeader, R.id.iv_avatar);
+        mIvAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NavigationViewActivity.this, WebViewActivity.class));
+            }
+        });
     }
-
 
     protected Toolbar getActionBarToolbar() {
         if (mActionBarToolbar != null) {

@@ -4,6 +4,9 @@
 /.idea/workspace.xml
 /.idea/libraries
 /.idea
+/keystore
 .DS_Store
 /build
 /captures
+*.apk
+/app/fabric.properties
