@@ -53,7 +53,7 @@ public abstract class NavigationViewActivity extends BaseActivity
         mIvAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NavigationViewActivity.this, WebViewActivity.class));
+                startActivity(new Intent(NavigationViewActivity.this, LoginActivity.class));
             }
         });
     }

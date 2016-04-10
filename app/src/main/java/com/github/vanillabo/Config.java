@@ -5,8 +5,6 @@ package com.github.vanillabo;
  */
 public class Config {
 
-    public static final String PREF_NAME = "vanillabo";
-
     public static final String APP_KEY = "2847295106";
 
     public static final String APP_SECRET = "9357ae59c18e049f8ccbb852271559ef";

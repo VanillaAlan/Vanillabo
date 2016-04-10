@@ -26,7 +26,7 @@
             android:name="io.fabric.ApiKey"
             android:value="16718f61dd3f79c58db8fb1eabc9ca75d12efdbc" />
 
-        <activity android:name=".ui.WebViewActivity"></activity>
+        <activity android:name=".ui.LoginActivity"></activity>
     </application>
 
 </manifest>

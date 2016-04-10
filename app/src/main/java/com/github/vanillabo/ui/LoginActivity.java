@@ -2,6 +2,7 @@ package com.github.vanillabo.ui;
 
 import com.github.vanillabo.Config;
 import com.github.vanillabo.R;
+import com.github.vanillabo.Util.VanillaboPrefs;
 import com.github.vanillabo.api.AuthorizeCodeListener;
 import com.github.vanillabo.api.WeiboAuthService;
 import com.github.vanillabo.model.AccessToken;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import retrofit2.Call;
@@ -20,7 +22,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class WebViewActivity extends BaseActivity implements AuthorizeCodeListener {
+public class LoginActivity extends BaseActivity implements AuthorizeCodeListener {
 
     @Bind(R.id.webview)
     WebView mWebView;
@@ -100,13 +102,20 @@ public class WebViewActivity extends BaseActivity implements AuthorizeCodeListen
         accessTokenCall.enqueue(new Callback<AccessToken>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-
+                VanillaboPrefs.getInstance(LoginActivity.this).setAccessToken(response.body());
+                setResultBack(RESULT_OK);
             }
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-
+                Toast.makeText(LoginActivity.this, "weibo login failed:", Toast.LENGTH_SHORT).show();
+                setResultBack(RESULT_CANCELED);
             }
         });
+    }
+
+    private void setResultBack(int result) {
+        setResult(result);
+        finish();
     }
 }
