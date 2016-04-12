@@ -89,7 +89,7 @@ public class LoginActivity extends BaseActivity implements AuthorizeCodeListener
     @Override
     public void authorizeCode(String code) {
         final WeiboAuthService weiboAuthApi = new Retrofit.Builder()
-                .baseUrl(Config.WEIBO_API_HOST)
+                .baseUrl(Config.OAUTH_API_HOST)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(WeiboAuthService.class);

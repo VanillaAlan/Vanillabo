@@ -11,7 +11,9 @@ public class Config {
 
     public static final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 
-    public static final String WEIBO_API_HOST = "https://api.weibo.com/";
+    public static final String OAUTH_API_HOST = "https://api.weibo.com/";
+
+    public static final String WEIBO_API_HOST = "https://api.weibo.com/2/";
 
     public static final String AUTHORIZE_URL = "https://api.weibo.com/oauth2/authorize?client_id=" + Config.APP_KEY
             + "&response_type=code&redirect_uri=" + Config.REDIRECT_URI + "&forcelogin=true";

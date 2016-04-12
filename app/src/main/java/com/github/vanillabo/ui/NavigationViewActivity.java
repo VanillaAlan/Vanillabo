@@ -1,6 +1,12 @@
 package com.github.vanillabo.ui;
 
+import com.bumptech.glide.Glide;
+import com.github.vanillabo.Config;
 import com.github.vanillabo.R;
+import com.github.vanillabo.Util.VanillaboPrefs;
+import com.github.vanillabo.api.WeiboUserShowService;
+import com.github.vanillabo.model.AccessToken;
+import com.github.vanillabo.model.WeiboUser;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,16 +20,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 /**
  * Created by alan on 16/4/7.
  */
 public abstract class NavigationViewActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int REQUEST_CODE_LOGIN = 801;
 
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -38,7 +53,15 @@ public abstract class NavigationViewActivity extends BaseActivity
 
     private View mNavigationViewHeader;
 
-    ImageView mIvAvatar;
+    private CircleImageView mIvAvatar;
+
+    private TextView mTvScreenName;
+
+    private TextView mTvDesc;
+
+    private TextView mTvFollowing;
+
+    private TextView mTvFollower;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +76,21 @@ public abstract class NavigationViewActivity extends BaseActivity
         mIvAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NavigationViewActivity.this, LoginActivity.class));
+                if (!VanillaboPrefs.getInstance(NavigationViewActivity.this).isLoggedIn()) {
+                    gotoLogin();
+                }
             }
         });
+        mTvScreenName = ButterKnife.findById(mNavigationViewHeader, R.id.tv_screen_name);
+        mTvDesc = ButterKnife.findById(mNavigationViewHeader, R.id.tv_desc);
+        mTvFollower = ButterKnife.findById(mNavigationViewHeader, R.id.tv_followers);
+        mTvFollowing = ButterKnife.findById(mNavigationViewHeader, R.id.tv_following);
+        if (VanillaboPrefs.getInstance(this).isLoggedIn()) {
+            renderUserInfo(VanillaboPrefs.getInstance(this).getWeiboUser());
+        } else {
+            mNavigationView.getMenu().clear();
+            gotoLogin();
+        }
     }
 
     protected Toolbar getActionBarToolbar() {
@@ -63,6 +98,11 @@ public abstract class NavigationViewActivity extends BaseActivity
             setSupportActionBar(mActionBarToolbar);
         }
         return mActionBarToolbar;
+    }
+
+    private void gotoLogin() {
+        startActivityForResult(new Intent(NavigationViewActivity.this, LoginActivity.class),
+                REQUEST_CODE_LOGIN);
     }
 
     @Override
@@ -89,9 +129,23 @@ public abstract class NavigationViewActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        goToNavDrawerItem(id);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (id == R.id.logout) {
+            logout();
+        } else {
+            goToNavDrawerItem(id);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
         return true;
+    }
+
+    private void logout() {
+        VanillaboPrefs.getInstance(this).logout();
+        mIvAvatar.setImageResource(R.drawable.ic_avatar_def);
+        mTvScreenName.setText("");
+        mTvFollower.setText("");
+        mTvFollowing.setText("");
+        mTvDesc.setText("");
+        mNavigationView.getMenu().clear();
     }
 
     private void goToNavDrawerItem(int item) {
@@ -120,5 +174,49 @@ public abstract class NavigationViewActivity extends BaseActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                getUserInfo();
+            } else {
+
+            }
+        }
+    }
+
+    private void getUserInfo() {
+        AccessToken accessToken = VanillaboPrefs.getInstance(this).getAccessToken();
+        final WeiboUserShowService weiboUserShowService = new Retrofit.Builder()
+                .baseUrl(Config.WEIBO_API_HOST)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(WeiboUserShowService.class);
+        final Call<WeiboUser> weiboUserCall = weiboUserShowService.getWeiboUser(
+                accessToken.access_token,
+                accessToken.uid);
+        weiboUserCall.enqueue(new Callback<WeiboUser>() {
+            @Override
+            public void onResponse(Call<WeiboUser> call, Response<WeiboUser> response) {
+                VanillaboPrefs.getInstance(NavigationViewActivity.this).setWeiboUser(response.body());
+                mNavigationView.inflateMenu(R.menu.activity_main_drawer);
+                renderUserInfo(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<WeiboUser> call, Throwable t) {
+                Timber.e(t, "get user info error");
+            }
+        });
+    }
+
+    private void renderUserInfo(WeiboUser weiboUser) {
+        Glide.with(this).load(weiboUser.avatar_large).crossFade().into(mIvAvatar);
+        mTvScreenName.setText(weiboUser.screen_name);
+        mTvDesc.setText(weiboUser.description);
+        mTvFollowing.setText(getString(R.string.following, weiboUser.friends_count));
+        mTvFollower.setText(getString(R.string.followers, weiboUser.followers_count));
     }
 }

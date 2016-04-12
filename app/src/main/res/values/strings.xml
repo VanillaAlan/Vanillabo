@@ -2,5 +2,16 @@
     <string name="app_name">Vanillabo</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
+    <string name="about">About</string>
+
+    <string name="followers">%1$s Followers</string>
+    <string name="following">%1$s Following</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_comment">Comment</string>
+    <string name="menu_favorite">Favorite</string>
+
+    <string name="menu_settings">Settings</string>
+    <string name="menu_logout">Logout</string>
+
 </resources>
