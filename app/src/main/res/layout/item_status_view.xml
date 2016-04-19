@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="18sp" />
+
+        <com.github.vanillabo.ui.widget.BoxGridLayout
+            android:id="@+id/grid_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:separatorColor="@android:color/white"
+            app:separatorWidth="2dp">
+
+            <include layout="@layout/image_status" />
+
+            <include layout="@layout/image_status" />
+
+            <include layout="@layout/image_status" />
+
+            <include layout="@layout/image_status" />
+
+            <include layout="@layout/image_status" />
+
+            <include layout="@layout/image_status" />
+
+
+        </com.github.vanillabo.ui.widget.BoxGridLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_repost_count"
+                style="@style/StatusActionText"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_repeat"
+                android:text="12"/>
+
+            <TextView
+                android:id="@+id/tv_comment_count"
+                style="@style/StatusActionText"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_action_comment" />
+
+            <TextView
+                android:id="@+id/tv_thumb_count"
+                style="@style/StatusActionText"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_thumb_up" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
